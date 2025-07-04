@@ -20,12 +20,16 @@ f_sin = 15000; #2khz
 x = 0.5 + 0.5 * np.sin(2*np.pi*f_sin*t)
 y, error = pdm(x) 
 
+print("date out "+''.join(map(lambda x:str(int(x)),y)))
+#print(int(''.join(map(lambda x:str(int(x)),y)),2).to_bytes(n//8,'little'))
+with open('pdm.dat','wb') as f:
+    f.write(int(''.join(map(lambda x:str(int(x)),y)),2).to_bytes(n//8,'big'))
 
-plt.plot(1e9*t, x, label='input signal')
-plt.step(1e9*t, y, label='pdm signal',  linewidth=2.0)
+#plt.plot(1e9*t, x, label='input signal')
+#plt.step(1e9*t, y, label='pdm signal',  linewidth=2.0)
 #plt.step(1e9*t, error, label='error')
-plt.xlabel('Time (ns)')
-plt.ylim(-0.05,1.05)
-plt.legend()
-plt.show()
-print(''.join(map(lambda x:str(int(x)),y)))
+#plt.xlabel('Time (ns)')
+#plt.ylim(-0.05,1.05)
+#plt.legend()
+#plt.show()
+
