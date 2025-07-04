@@ -8,7 +8,6 @@ module CICNR16 #(parameter N=3)( //16 bit output
 	output[15:0] y_out
 );
 
-reg x;
 reg [25:0] I [N-1:0];//Integrators
 reg [25:0] C [N  :0];//Combs
 reg [25:0] CD[N-1:0];//Comb Delays
@@ -78,6 +77,6 @@ end
 end
 endgenerate
 
-assign y_out = C[N][25:9];
+assign y_out = C[N][17:2];
 
 endmodule
