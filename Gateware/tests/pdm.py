@@ -11,8 +11,6 @@ def pdm(x):
         error[i+1] = y[i] - x[i] + error[i] 
     return y, error[0:n]
 
-
-
 n = 10000;
 fclk = 3.125e7 
 t = np.arange(n) / fclk 

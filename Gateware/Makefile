@@ -3,7 +3,7 @@ CC = iverilog -g2012
 PY = python3
 TEST = tests/pdm.sv
 TESTPY = tests/pdm.py
-SRC = src/cic.v
+SRC = src/cic.v src/fir.v
 
 
 

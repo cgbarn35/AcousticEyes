@@ -20,9 +20,9 @@ assign Itemp = I[0];//VISUALIZATION FOR GTKWAVE
 always @(posedge clk or posedge rst)
 begin
 	if(rst) begin 
-		I[0][25:0] <= 0;
+		I[0] <= 0;
 	end else begin 
-		I[0][25:0] <= I[0][25:0] + x_in;
+		I[0] <= I[0] + x_in;
 	end
 end
 
@@ -39,7 +39,7 @@ begin
 		C[0] <= 0;
 		CD[0] <= 0;
 	end else begin 
-		C[0] <= I[2];
+		C[0] <= I[N-1];
 		CD[0]<= C[0];
 		C[1] <= C[0] - CD[0];
 	end
@@ -53,9 +53,9 @@ generate
 		always @(posedge clk or posedge rst) 
 		begin 
 		if(rst) begin
-			I[i][25:0] <= 0;
+			I[i] <= 0;
 		end else begin 
-			I[i][25:0] <= I[i][25:0] + I[i-1][25:0];
+			I[i] <= I[i] + I[i-1];
 		end
 	end
 end
@@ -77,6 +77,6 @@ end
 end
 endgenerate
 
-assign y_out = C[N][17:2];
+assign y_out = C[N][20:4];
 
 endmodule
