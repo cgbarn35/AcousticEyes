@@ -16,9 +16,12 @@ reg RST;
 reg [15:0] cnt;
 reg sftData [CICCount:0];
 //OUTPUT
-wire CLKDIV;
+wire CLKDIVC1;
+wire CLKDIVH1;
+wire CLKDIVH2;
 wire [15:0] OUT [CICCount:0];
 wire [47:0] FOUT;
+wire [47:0] HB2OUT;
 //FILE CONTENTS
 integer fd;
 integer csv;
@@ -26,10 +29,22 @@ integer x;
 genvar i;
 reg [CICCount*9992:0] testData;
 
-ClockDivider #(16) C0 (//16 DIV CLOCK DIVISION
+ClockDivider #(8) C0 (//CIC FILTER CLOCK DIVIDER
 	CLK,
 	RST,
-	CLKDIV
+	CLKDIVC1
+	);
+
+ ClockDivider #(1) C1 (//HALFBAND 1 CLOCK DIVIDER
+	CLKDIVC1,
+	RST,
+	CLKDIVH1
+	);
+
+ ClockDivider #(1) C2 (//HALFBAND 2 CLOCK DIVIDER
+	CLKDIVH1,
+	RST,
+	CLKDIVH2
 	);
 
 //CIC FILTERS GENERATED
@@ -39,9 +54,9 @@ generate
 	wire sftT;
 	assign outT = OUT[i];
 	assign sftT = sftData[i];
-	CICNR16 #(3) uut (
+	CICNR16 #(4) uut (
 		.clk(CLK),
-		.clkdiv(CLKDIV),
+		.clkdiv(CLKDIVC1),
 		.rst(RST),
 		.x_in(sftData[i]),
 		.y_out(OUT[i])
@@ -49,12 +64,20 @@ generate
 	end
 endgenerate
 
-HalfBand1 uutH (
-	.clk(CLK),
-	.clkdiv(CLKDIV),
+HalfBand1 HB1 (
+	.clk(CLKDIVC1),
+	.clkdiv(CLKDIVH1),
 	.rst(RST),
-	.x_in(OUT[0]),
+	.x_in(OUT[18]),
 	.y_out(FOUT)
+	);
+
+HalfBand2 HB2(
+	.clk(CLKDIVH1),
+	.clkdiv(CLKDIVH2),
+	.rst(RST),
+	.x_in(FOUT[32:17]),
+	.y_out(HB2OUT)
 	);
 
 
@@ -73,9 +96,9 @@ end
 
 //Python Test Data Read
 
-always @(posedge CLKDIV) begin 
-	$display("%d,%d,%d",$time,OUT[0],FOUT);
-	$fwrite(csv,"%d,%d,%d\n",$time,OUT[0],FOUT);
+always @(posedge CLKDIVC1) begin 
+	$display("%d,%d,%d,%d",$time,OUT[18],FOUT,HB2OUT);
+	$fwrite(csv,"%d,%d,%d,%d\n",$time,OUT[18],FOUT,HB2OUT);
 end
 
 
@@ -83,11 +106,11 @@ initial begin
 	CLK = 0;
 	RST = 0;
 	cnt = 0;
-	#50 
+	#10 
 	RST = 1;
-	#100
+	#10
         RST = 0;
-	#36000
+	#10000
 	$fclose(csv);
         $finish;
 end
