@@ -1,10 +1,10 @@
 `timescale 100ns / 10ps
-`define HalfClockPeriod 2
+`define HalfClockPeriod 1.6
 
 module PDMTest;
 
-parameter CICCount = 20;
-
+parameter HzCount = 20;
+parameter FreqSet = 10;
 initial begin 
 	$dumpfile("out.vcd");
 	$dumpvars;
@@ -14,20 +14,22 @@ end
 reg CLK;
 reg RST;
 reg [15:0] cnt;
-reg sftData [CICCount:0];
+reg sftData [HzCount:0];
 //OUTPUT
 wire CLKDIVC1;
 wire CLKDIVH1;
 wire CLKDIVH2;
-wire [15:0] OUT [CICCount:0];
-wire [47:0] FOUT;
-wire [47:0] HB2OUT;
+wire [16:0] CIC_OUT [HzCount:0];
+wire [47:0] HB1_OUT [HzCount:0];
+wire [47:0] HB2_OUT [HzCount:0];
 //FILE CONTENTS
 integer fd;
 integer csv;
 integer x;
 genvar i;
-reg [CICCount*9992:0] testData;
+reg [10000:0] testData [0:HzCount];
+wire [10000:0] testTemp;
+assign testTemp = testData[0];
 
 ClockDivider #(8) C0 (//CIC FILTER CLOCK DIVIDER
 	CLK,
@@ -49,56 +51,53 @@ ClockDivider #(8) C0 (//CIC FILTER CLOCK DIVIDER
 
 //CIC FILTERS GENERATED
 generate 
-	for(i = 0; i < CICCount; i = i + 1) begin: CIC 
+	for(i = 0; i < HzCount; i = i + 1) begin: Filters 
 	wire [15:0] outT;
 	wire sftT;
-	assign outT = OUT[i];
+	assign outT = CIC_OUT[i];
 	assign sftT = sftData[i];
-	CICNR16 #(4) uut (
+	CICNR16 #(4) uutC (
 		.clk(CLK),
 		.clkdiv(CLKDIVC1),
 		.rst(RST),
 		.x_in(sftData[i]),
-		.y_out(OUT[i])
+		.y_out(CIC_OUT[i])
+		);
+	HalfBand1 uutH1 ( //TODO CONVERT FROM NAIVE MULT BLOCK IMPLEMENTATION TO FSM CONTROL
+		.clk(CLKDIVC1),
+		.clkdiv(CLKDIVH1),
+		.rst(RST),
+		.x_in(CIC_OUT[i]),
+		.y_out(HB1_OUT[i])
 		);
 	end
 endgenerate
-
-HalfBand1 HB1 (
-	.clk(CLKDIVC1),
-	.clkdiv(CLKDIVH1),
-	.rst(RST),
-	.x_in(OUT[18]),
-	.y_out(FOUT)
-	);
 
 HalfBand2 HB2(
 	.clk(CLKDIVH1),
 	.clkdiv(CLKDIVH2),
 	.rst(RST),
-	.x_in(FOUT[32:17]),
-	.y_out(HB2OUT)
+	.x_in(HB1_OUT[FreqSet]),
+	.y_out(HB2_OUT[FreqSet])
 	);
 
 
 //TEST DATA GENERATED
 initial begin 
-	fd = $fopen("./pdm.dat","rb");
-	if(fd) $display("file opened successfully %0d",fd);
-	else   $display("file not opened %0d",fd);
-	$fread(testData,fd);
+	$readmemb("pdm.mem",testData);
 	//$display("data read %b",testData);
 	$fclose(fd);
 	csv = $fopen("./pdm.csv","w");
 	if(csv) $display("file opened successfully %0d",csv);
 	else   $display("file not opened %0d",csv);
+	$fwrite(csv,"0,0,0,0,%d\n",FreqSet);
 end
 
 //Python Test Data Read
 
 always @(posedge CLKDIVC1) begin 
-	$display("%d,%d,%d,%d",$time,OUT[18],FOUT,HB2OUT);
-	$fwrite(csv,"%d,%d,%d,%d\n",$time,OUT[18],FOUT,HB2OUT);
+	$display("%d,%d,%d,%d",$time,CIC_OUT[FreqSet],HB1_OUT[FreqSet],HB2_OUT[FreqSet]);
+	$fwrite(csv,"%d,%d,%d,%d\n",$time,CIC_OUT[FreqSet],HB1_OUT[FreqSet],HB2_OUT[FreqSet]);
 end
 
 
@@ -123,12 +122,12 @@ end
 //TEST DATA SHIFT REGISTERS
 always @(posedge CLK or posedge RST) begin
 	if(RST) begin 
-		cnt = 0;
-		for(x = 0; x < CICCount; x = x + 1) sftData[x] = 0;
+		cnt <= 0;
+		for(x = 0; x < HzCount; x = x + 1) sftData[x] <= 0;
 	end
 	else begin
-		cnt = cnt + 1;
-		for(x = 0; x < CICCount; x = x + 1) sftData[x] = testData[x*10000+cnt];
+		cnt <= cnt + 1;
+		for(x = 0; x < HzCount; x = x + 1) sftData[x] <= testData[x][cnt];
 	end
 end
 

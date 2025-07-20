@@ -1,11 +1,10 @@
-TARGET = out.vcd pdm.dat out pdm.csv
+TARGET = out.vcd pdm.dat out pdm.csv pdm.mem
 CC = iverilog -g2012
 PY = python3
 TEST = tests/pdm.sv
 TESTPY = tests/pdm.py
 GRAPHPY = src/ref.py
 SRC = src/cic.v src/fir.v
-
 
 
 all: build

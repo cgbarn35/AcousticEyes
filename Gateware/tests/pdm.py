@@ -30,9 +30,11 @@ n = 10000;
 fclk = 3125000
 t = np.arange(n) / fclk 
 
-with open('pdm.dat','wb') as f:
+with open('pdm.dat','wb') as f, open('pdm.mem','w') as f2:
     for f_sin in range(1000, 21000, 1000):
         x = 0.5 + 0.5 * np.sin(2*np.pi*f_sin*t)
-        #y = pdm(x) 
-        y = ds2(x,1,1.4)
+        y = pdm(x) 
+        #y = ds2(x,1,1.5)
+
+        f2.write(''.join(map(lambda x:str(int(x)),y))+" ")
         f.write(int(''.join(map(lambda x:str(int(x)),y)),2).to_bytes(n//8,'big'))

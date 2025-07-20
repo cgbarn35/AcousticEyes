@@ -44,20 +44,19 @@ def pull_pdm(n):
     return ba
         
 
-def pull_cic():
-    with open('pdm.csv', 'r') as f:
-        reader = csv.reader(f)
-        data = list(reader)
-        t_v = np.asarray([float(row[0]) for row in data], dtype=float)
-        y = np.asarray([float(row[1]) for row in data], dtype=float)
-        y2= np.asarray([float(row[2]) for row in data], dtype=float)
-    return t_v,y,y2
+with open('pdm.csv', 'r') as f:
+    reader = csv.reader(f)
+    data = list(reader)
+    freq_count = int(data[0][4])
+    t_v = np.asarray([float(row[0]) for row in data], dtype=float)
+    y_cic = np.asarray([float(row[1]) for row in data], dtype=float)
+    y_hb1= np.asarray([float(row[2]) for row in data], dtype=float)
+    y_hb2= np.asarray([float(row[3]) for row in data], dtype=float)
 
-t_v,y,y2 = pull_cic()
-pdm = pull_pdm(1)
+pdm = pull_pdm(freq_count)
 
 t = 0;
-f_sin = 2000
+f_sin = (freq_count+1)*1000
 
 sin = []
 cic = []
@@ -77,9 +76,10 @@ while sample_num < 3000:
     
 ts = [t / sample_rate * decimation_factor * 1000 for t in range(len(sin))] 
 plt.plot(ts, sin, label='Python Input')
-plt.step(ts, cic, label='python CIC')
-plt.step(t_v*1e-4, y/2**15, label='Verilog CIC',  linewidth=2.0)
-#plt.plot(t_v*1e-4, y2/2**38, label='Verilog HB1',  linewidth=2.0)
+plt.plot(ts, cic, label='python CIC')
+plt.step(t_v*1e-4, y_cic/2**16, label='Verilog CIC',  linewidth=2.0)
+plt.step(t_v*1e-4, y_hb1/2**35, label='Verilog HB1',  linewidth=2.0)
+plt.step(t_v*1e-4, y_hb2/2**15, label='Verilog HB2',  linewidth=2.0)
 plt.xlabel('Time (ms)')
 plt.ylim(-0.05,1.05)
 plt.legend()

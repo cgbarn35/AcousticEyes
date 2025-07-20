@@ -5,11 +5,11 @@ module CICNR16 #(parameter N=3)( //16 bit output
 	input clkdiv,
 	input rst,
 	input x_in,
-	output reg[15:0] y_out
+	output reg[16:0] y_out
 );
 
 reg [25:0] I [N-1:0];//Integrators
-reg [25:0] C [N  :0];//Combs
+reg [25:0] C [N-1:0];//Combs
 reg [25:0] CD[N-1:0];//Comb Delays
 
 //INTEGRATORS
@@ -44,10 +44,12 @@ assign Ctemp0 = C[0];
 assign Ctemp1 = C[1];
 assign Ctemp2 = C[2];
 assign Ctemp3 = C[3];
+reg[25:0] Temp;
 
 always @(posedge clkdiv or posedge rst)
 begin
-	if(rst) begin 
+	if(rst) begin
+		Temp <= 0;
 		for(x=0; x < N; x = x + 1) begin 
 			C[x] <= 0;
 			CD[x] <= 0;
@@ -76,9 +78,8 @@ initial begin
 		CD[x] <= 0;
 		I[x] <= 0;
 	end
-	C[N] <= 0;
 end
 
-assign y_out = C[3][16:1];
+assign y_out = C[3];
 
 endmodule
