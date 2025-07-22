@@ -19,9 +19,11 @@ reg sftData [HzCount:0];
 wire CLKDIVC1;
 wire CLKDIVH1;
 wire CLKDIVH2;
+wire CLKDIVF0;
 wire [16:0] CIC_OUT [HzCount:0];
-wire [16:0] HB1_OUT [HzCount:0];
-wire [47:0] HB2_OUT [HzCount:0];
+wire [17:0] HB1_OUT [HzCount:0];
+wire [17:0] HB2_OUT [HzCount:0];
+wire [17:0] FIR_OUT [HzCount:0];
 //FILE CONTENTS
 integer fd;
 integer csv;
@@ -49,7 +51,13 @@ ClockDivider #(8) C0 (//CIC FILTER CLOCK DIVIDER
 	CLKDIVH2
 	);
 
-//CIC FILTERS GENERATED
+  ClockDivider #(1) C3 (//FIR OUT CLOCK DIVIDER
+	CLKDIVH2,
+	RST,
+	CLKDIVF0
+	);
+
+//FILTERS GENERATED
 generate 
 	for(i = 0; i < HzCount; i = i + 1) begin: Filters 
 	wire [15:0] outT;
@@ -70,17 +78,23 @@ generate
 		.x_in(CIC_OUT[i]),
 		.y_out(HB1_OUT[i])
 		);
+	HalfBand2 uutH2 (
+		.clk(CLKDIVH1),
+		.clkdiv(CLKDIVH2),
+		.rst(RST),
+		.x_in(HB1_OUT[i]),
+		.y_out(HB2_OUT[i])
+		);
 	end
 endgenerate
 
-HalfBand2 HB2(
-	.clk(CLKDIVH1),
-	.clkdiv(CLKDIVH2),
+F_FIR F0(
+	.clk(CLKDIVH2),
+	.clkdiv(CLKDIVF0),
 	.rst(RST),
-	.x_in(HB1_OUT[FreqSet]),
-	.y_out(HB2_OUT[FreqSet])
+	.x_in(HB2_OUT[FreqSet]),
+	.y_out(FIR_OUT[FreqSet])
 	);
-
 
 //TEST DATA GENERATED
 initial begin 
@@ -96,8 +110,8 @@ end
 //Python Test Data Read
 
 always @(posedge CLKDIVC1) begin 
-	$display("%d,%d,%d,%d",$time,CIC_OUT[FreqSet],HB1_OUT[FreqSet],HB2_OUT[FreqSet]);
-	$fwrite(csv,"%d,%d,%d,%d\n",$time,CIC_OUT[FreqSet],HB1_OUT[FreqSet],HB2_OUT[FreqSet]);
+	$display("%d,%d,%d,%d,%d",$time,CIC_OUT[FreqSet],HB1_OUT[FreqSet],HB2_OUT[FreqSet],FIR_OUT[FreqSet]);
+	$fwrite(csv,"%d,%d,%d,%d,%d\n",$time,CIC_OUT[FreqSet],HB1_OUT[FreqSet],HB2_OUT[FreqSet],FIR_OUT[FreqSet]);
 end
 
 
@@ -115,7 +129,7 @@ initial begin
 end
 
 //CLK INITIALIZATION
-always begin                                                 
+always begin
 	#`HalfClockPeriod CLK = ~CLK;                         
 end
 
