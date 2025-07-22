@@ -58,17 +58,10 @@ begin
 	else begin
 		CD[0]<= I[N-1];
 		C[0] <= I[N-1] - CD[0];
-		CD[1]<= C[0];
-		C[1] <= C[0] - CD[1];
-		CD[2]<= C[1];
-		C[2] <= C[1] - CD[2];
-		CD[3]<= C[2];
-		C[3] <= C[2] - CD[3];
-
-		//for(x = 1; x < N; x = x + 1) begin 
-		//	CD[x] = C[x];
-		//	C[x+1] = C[x] - CD[x];
-		//end
+		for(x = 1; x < N; x = x + 1) begin 
+			CD[x] <= C[x-1];
+			C[x] <= C[x-1] - CD[x];
+		end
 	end
 end
 

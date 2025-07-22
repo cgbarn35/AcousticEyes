@@ -4,7 +4,7 @@
 module PDMTest;
 
 parameter HzCount = 20;
-parameter FreqSet = 10;
+parameter FreqSet = 2;
 initial begin 
 	$dumpfile("out.vcd");
 	$dumpvars;
@@ -20,7 +20,7 @@ wire CLKDIVC1;
 wire CLKDIVH1;
 wire CLKDIVH2;
 wire [16:0] CIC_OUT [HzCount:0];
-wire [47:0] HB1_OUT [HzCount:0];
+wire [16:0] HB1_OUT [HzCount:0];
 wire [47:0] HB2_OUT [HzCount:0];
 //FILE CONTENTS
 integer fd;

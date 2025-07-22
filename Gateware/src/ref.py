@@ -77,9 +77,9 @@ while sample_num < 3000:
 ts = [t / sample_rate * decimation_factor * 1000 for t in range(len(sin))] 
 plt.plot(ts, sin, label='Python Input')
 plt.plot(ts, cic, label='python CIC')
-plt.step(t_v*1e-4, y_cic/2**16, label='Verilog CIC',  linewidth=2.0)
-plt.step(t_v*1e-4, y_hb1/2**35, label='Verilog HB1',  linewidth=2.0)
-plt.step(t_v*1e-4, y_hb2/2**15, label='Verilog HB2',  linewidth=2.0)
+plt.plot(t_v*1e-4, y_cic/2**16, label='Verilog CIC',  linewidth=2.0)
+plt.plot(t_v*1e-4, y_hb1/2**16, label='Verilog HB1',  linewidth=2.0)
+plt.step(t_v*1e-4, y_hb2/2**18, label='Verilog HB2',  linewidth=2.0)
 plt.xlabel('Time (ms)')
 plt.ylim(-0.05,1.05)
 plt.legend()
