@@ -4,7 +4,7 @@ PY = python3
 TEST = tests/pdm.sv
 TESTPY = tests/pdm.py
 GRAPHPY = src/ref.py
-SRC = src/cic.v src/fir.v
+SRC = src/cic.v src/fir.v src/clkdiv.v
 
 
 all: build

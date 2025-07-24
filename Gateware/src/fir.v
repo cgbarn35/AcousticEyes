@@ -6,26 +6,32 @@ module HalfBand1 (
 	input clk,
 	input clkdiv,
 	input rst,
-	input [16:0] x_in,
-	output reg [17:0] y_out 
+	input signed [16:0] x_in,//Q0.17
+	output reg signed [16:0] y_out //Q0.17
 );
 
 //Fixed Coefficients for Halfband Filter
-//following numbers are in Q(1,20) format, sign extended to Q(5,20)
-reg[24:0] HB1coff0 = {{4{1'b0}},21'h002090};
+//Q8.17
+//reg signed [24:0] HB1coff0 = {{7{1'b0}},21'h002098 >> 3};
 //coff1 is not used
-reg[24:0] HB1coff2 = {{4{1'b1}},21'h1F2158};
+//reg signed [24:0] HB1coff2 = {{7{1'b1}},18'h3E42B}; //Don't
 //coff3 is not used
-reg[24:0] HB1coff4 = {{4{1'b0}},21'h04BE38};
-reg[24:0] HB1coff5 = {{4{1'b0}},21'h080000};
+//reg signed [24:0] HB1coff4 = {{7{1'b0}},21'h04BE38 >> 3};
+//reg signed [24:0] HB1coff5 = {{7{1'b0}},21'h080000 >> 3};
 
-reg[17:0] D[9:0]; //Delay Registers
-reg[47:0] r[8:0];//Sum Registers
+//Q9.16
+reg signed [24:0] HB1coff0 = 25'h0000209;
+reg signed [24:0] HB1coff2 = 25'h1FFF218;
+reg signed [24:0] HB1coff4 = 25'h0004BE4;
+reg signed [24:0] HB1coff5 = 25'h0008000;
+
+reg signed [17:0] D[9:0]; //Delay Registers
+reg signed [47:0] r[8:0];//Sum Registers
 
 //NAIVE APPROACH, TODO REFACTOR
 //TODO USE DSP48E ?
 
-MACBlock m0(HB1coff0,{{1{1'b0}},x_in},48'b0,r[0]);//Sign extend x_in
+MACBlock m0(HB1coff0,{1'b0,x_in},48'b0,r[0]);//Sign extend x_in to Q1.17
 MACBlock m1(HB1coff2,D[1],r[0],r[1]);
 MACBlock m2(HB1coff4,D[3],r[1],r[2]);
 MACBlock m3(HB1coff5,D[4],r[2],r[3]);
@@ -35,29 +41,17 @@ MACBlock m6(HB1coff0,D[9],r[5],r[6]);
 
 integer i;
 always @(posedge clk or posedge rst) begin 
-	if(rst) begin 
-		for(i = 0; i < 10; i = i + 1) D[i] <= 0;
-	end
-        else begin
+	if(rst) for(i = 0; i < 10; i = i + 1) D[i] <= 0;
+	else begin 
 		for(i = 1; i< 10; i = i + 1) D[i] <= D[i-1];
-                D[0] <= {{1{1'b0}},x_in};
+                D[0] <= {1'b0,x_in};//Q1.17
 	end
-end
-
-initial begin 
-	y_out <= 0;
 end
 
 always @(posedge clkdiv or posedge rst) begin 
-	if(rst) begin 
-		y_out <= 0;
-	end 
-	else begin 
-		y_out <= r[6]>>20;
-	end
+	if(rst) y_out <= 0;
+	else  	y_out <= r[6]>>16;
 end
-
-
 
 endmodule
 
@@ -65,7 +59,7 @@ module HalfBand2 (
 	input clk,
 	input clkdiv,
 	input rst,
-	input [17:0] x_in, //TODO CHECK ON THIS
+	input [16:0] x_in, //TODO CHECK ON THIS
 	output reg [17:0] y_out 
 );
 
@@ -82,7 +76,7 @@ reg[17:0] D[25:0]; //Delay Registers
 reg[47:0] r[14:0];//Sum Registers
 
 
-MACBlock m0(HB2coff0,x_in,48'b0,r[0]);
+MACBlock m0(HB2coff0,{1'b0,x_in},48'b0,r[0]);
 MACBlock m1(HB2coff2,D[1],r[0],r[1]);
 MACBlock m2(HB2coff4,D[3],r[1],r[2]);
 MACBlock m3(HB2coff6,D[5],r[2],r[3]);
@@ -101,24 +95,16 @@ MACBlock m14(HB2coff0,D[25],r[13],r[14]);
 
 integer i;
 always @(posedge clk or posedge rst) begin 
-	if(rst) begin 
-		for(i = 0; i < 26; i = i + 1) D[i] <= 0;
-	end
+	if(rst) for(i = 0; i < 26; i = i + 1) D[i] <= 0;
         else begin
 		for(i = 1; i < 26; i = i + 1) D[i] <= D[i-1];
                 D[0] <= {{1{1'b0}},x_in};
 	end
 end
-initial begin 
-	y_out <= 0;
-end
+
 always @(posedge clkdiv or posedge rst) begin 
-	if(rst) begin 
-		y_out <= 0;
-	end 
-	else begin 
-		y_out <= r[14]>>18;
-	end
+	if(rst) y_out <= 0;
+	else	y_out <= r[14]>>18;
 end
 
 endmodule
@@ -154,8 +140,6 @@ reg[24:0] FIRcoffH = {{4{1'b0}},21'h0853C8};
 
 reg[17:0] D[33:0]; //Delay Registers
 reg[47:0] r[34:0];//Sum Registers
-
-
 
 MACBlock m0(FIRcoff0,x_in,48'b0,r[0]);
 MACBlock m1(FIRcoff1,D[0],r[0],r[1]);
@@ -194,7 +178,6 @@ MACBlock m33(FIRcoff1,D[32],r[32],r[33]);
 MACBlock m34(FIRcoff0,D[33],r[33],r[34]);
 
 
-
 integer i;
 always @(posedge clk or posedge rst) begin 
 	if(rst) begin 
@@ -231,5 +214,9 @@ module MACBlock ( //TEMPORARY FOR IVERILOG COMPILATION
 );
 //TODO INTRODUCE ACTUAL DSP48E FUNCTIONALITY
 assign out = (a*b) + c;
-
 endmodule
+
+
+
+
+
