@@ -4,7 +4,7 @@
 module PDMTest;
 
 parameter HzCount = 20;
-parameter FreqSet = 2;
+parameter FreqSet = 1;
 initial begin 
 	$dumpfile("out.vcd");
 	$dumpvars;
@@ -123,7 +123,7 @@ initial begin
 	RST = 1;
 	#10
         RST = 0;
-	#10000
+	#20000
 	$fclose(csv);
         $finish;
 end

@@ -110,24 +110,25 @@ module F_FIR(
 	output reg signed [17:0] y_out 
 );
 
-reg[24:0] FIRcoff0 = {{4{1'b0}},21'h000148};
-reg[24:0] FIRcoff1 = {{4{1'b0}},21'h0004C0};
-reg[24:0] FIRcoff2 = {{4{1'b0}},21'h1FFAD0};
-reg[24:0] FIRcoff3 = {{4{1'b0}},21'h1FF590};
-reg[24:0] FIRcoff4 = {{4{1'b0}},21'h000D88};
-reg[24:0] FIRcoff5 = {{4{1'b0}},21'h0013B8};
-reg[24:0] FIRcoff6 = {{4{1'b0}},21'h1FE1D0};
-reg[24:0] FIRcoff7 = {{4{1'b0}},21'h1FE008};
-reg[24:0] FIRcoff8 = {{4{1'b0}},21'h003BC0};
-reg[24:0] FIRcoff9 = {{4{1'b0}},21'h002E00};
-reg[24:0] FIRcoffA = {{4{1'b0}},21'h1F9180};
-reg[24:0] FIRcoffB = {{4{1'b0}},21'h1FC3C0};
-reg[24:0] FIRcoffC = {{4{1'b0}},21'h00C8A8};
-reg[24:0] FIRcoffD = {{4{1'b0}},21'h004880};
-reg[24:0] FIRcoffE = {{4{1'b0}},21'h1E7410};
-reg[24:0] FIRcoffF = {{4{1'b0}},21'h1FAF20};
-reg[24:0] FIRcoffG = {{4{1'b0}},21'h050A68};
-reg[24:0] FIRcoffH = {{4{1'b0}},21'h0853C8};
+//Q8.17
+reg[24:0] FIRcoff0 = 25'h000002a;
+reg[24:0] FIRcoff1 = 25'h0000098;
+reg[24:0] FIRcoff2 = 25'h1ffff5a;
+reg[24:0] FIRcoff3 = 25'h1fffeb3;
+reg[24:0] FIRcoff4 = 25'h00001b2;
+reg[24:0] FIRcoff5 = 25'h0000278;
+reg[24:0] FIRcoff6 = 25'h1fffc3a;
+reg[24:0] FIRcoff7 = 25'h1fffc02;
+reg[24:0] FIRcoff8 = 25'h0000779;
+reg[24:0] FIRcoff9 = 25'h00005c0;
+reg[24:0] FIRcoffA = 25'h1fff231;
+reg[24:0] FIRcoffB = 25'h1fff879;
+reg[24:0] FIRcoffC = 25'h0001916;
+reg[24:0] FIRcoffD = 25'h0000910;
+reg[24:0] FIRcoffE = 25'h1ffce83;
+reg[24:0] FIRcoffF = 25'h1fff5e5;
+reg[24:0] FIRcoffG = 25'h000a14e;
+reg[24:0] FIRcoffH = 25'h0010a7a;
 
 
 
