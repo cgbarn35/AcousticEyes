@@ -7,23 +7,15 @@ module HalfBand1 (
 	input clkdiv,
 	input rst,
 	input signed [16:0] x_in,//Q0.17
-	output reg signed [16:0] y_out //Q0.17
+	output reg signed [17:0] y_out //Q0.17
 );
 
 //Fixed Coefficients for Halfband Filter
 //Q8.17
-//reg signed [24:0] HB1coff0 = {{7{1'b0}},21'h002098 >> 3};
-//coff1 is not used
-//reg signed [24:0] HB1coff2 = {{7{1'b1}},18'h3E42B}; //Don't
-//coff3 is not used
-//reg signed [24:0] HB1coff4 = {{7{1'b0}},21'h04BE38 >> 3};
-//reg signed [24:0] HB1coff5 = {{7{1'b0}},21'h080000 >> 3};
-
-//Q9.16
-reg signed [24:0] HB1coff0 = 25'h0000209;
-reg signed [24:0] HB1coff2 = 25'h1FFF218;
-reg signed [24:0] HB1coff4 = 25'h0004BE4;
-reg signed [24:0] HB1coff5 = 25'h0008000;
+reg signed [24:0] HB1coff0 = {{7{1'b0}},21'h002098 >> 3};
+reg signed [24:0] HB1coff2 = {{7{1'b1}},18'h3E42B}; //Don't
+reg signed [24:0] HB1coff4 = {{7{1'b0}},21'h04BE38 >> 3};
+reg signed [24:0] HB1coff5 = {{7{1'b0}},21'h080000 >> 3};
 
 reg signed [17:0] D[9:0]; //Delay Registers
 reg signed [47:0] r[8:0];//Sum Registers
@@ -59,24 +51,25 @@ module HalfBand2 (
 	input clk,
 	input clkdiv,
 	input rst,
-	input [16:0] x_in, //TODO CHECK ON THIS
-	output reg [17:0] y_out 
+	input signed [17:0] x_in, //TODO CHECK ON THIS
+	output reg signed [17:0] y_out 
 );
 
-reg[24:0] HB2coff0 = {{4{1'b0}},21'h000180};
-reg[24:0] HB2coff2 = {{4{1'b1}},21'h1FF7D0};
-reg[24:0] HB2coff4 = {{4{1'b0}},21'h001B38};
-reg[24:0] HB2coff6 = {{4{1'b1}},21'h1FB928};
-reg[24:0] HB2coff8 = {{4{1'b0}},21'h00A188};
-reg[24:0] HB2coff10 ={{4{1'b1}},21'h1E9110};
-reg[24:0] HB2coff12 ={{4{1'b0}},21'h04FFb0};
-reg[24:0] HB2coff13 ={{4{1'b0}},21'h080000};
+//Q8.17
+reg[24:0] HB2coff0 = {{7{1'b0}},21'h000180>>3};
+reg[24:0] HB2coff2 = {{7{1'b1}},18'h1FF7D<<1}; //TODO MAKE THE NEGATIVES EASIER TO REPRESENT
+reg[24:0] HB2coff4 = {{7{1'b0}},21'h001B38>>3};
+reg[24:0] HB2coff6 = {{7{1'b1}},18'h3F725}; 
+reg[24:0] HB2coff8 = {{7{1'b0}},21'h00A188>>3};
+reg[24:0] HB2coff10 ={{7{1'b1}},18'h1E911<<1}; //TODO MAKE THE NEGATIVES LESS GROSS LOOKING
+reg[24:0] HB2coff12 ={{7{1'b0}},21'h04FFb0>>3};
+reg[24:0] HB2coff13 ={{7{1'b0}},21'h080000>>3};
 
 reg[17:0] D[25:0]; //Delay Registers
 reg[47:0] r[14:0];//Sum Registers
 
 
-MACBlock m0(HB2coff0,{1'b0,x_in},48'b0,r[0]);
+MACBlock m0(HB2coff0,x_in,48'b0,r[0]);
 MACBlock m1(HB2coff2,D[1],r[0],r[1]);
 MACBlock m2(HB2coff4,D[3],r[1],r[2]);
 MACBlock m3(HB2coff6,D[5],r[2],r[3]);
@@ -98,13 +91,13 @@ always @(posedge clk or posedge rst) begin
 	if(rst) for(i = 0; i < 26; i = i + 1) D[i] <= 0;
         else begin
 		for(i = 1; i < 26; i = i + 1) D[i] <= D[i-1];
-                D[0] <= {{1{1'b0}},x_in};
+                D[0] <= x_in;
 	end
 end
 
 always @(posedge clkdiv or posedge rst) begin 
 	if(rst) y_out <= 0;
-	else	y_out <= r[14]>>18;
+	else	y_out <= r[14]>>16;
 end
 
 endmodule
@@ -113,8 +106,8 @@ module F_FIR(
 	input clk,
 	input clkdiv,
 	input rst,
-	input [17:0] x_in,
-	output reg [17:0] y_out 
+	input signed [17:0] x_in,
+	output reg signed [17:0] y_out 
 );
 
 reg[24:0] FIRcoff0 = {{4{1'b0}},21'h000148};

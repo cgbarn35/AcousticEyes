@@ -32,7 +32,7 @@ t = np.arange(n) / fclk
 
 with open('pdm.dat','wb') as f, open('pdm.mem','w') as f2:
     for f_sin in range(1000, 21000, 1000):
-        x = 0.5 + 0.5 * np.sin(2*np.pi*f_sin*t)
+        x = 0.5 + 0.49 * np.sin(2*np.pi*f_sin*t)
         y = pdm(x) 
         #y = ds2(x,1,1.5)
 

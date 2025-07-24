@@ -65,10 +65,10 @@ while sample_num < 3000:
     c = process_sample_cic(pdm[sample_num])
     if c:
         cic.append(c / 2**16)
-        sin.append(math.sin(2*np.pi*f_sin*t) * 0.5 + 0.5)
+        sin.append(math.sin(2*np.pi*f_sin*t) * 0.49 + 0.5)
     elif c == 0:
         cic.append(0)
-        sin.append(math.sin(2*np.pi*f_sin*t) * 0.5 + 0.5)
+        sin.append(math.sin(2*np.pi*f_sin*t) * 0.49 + 0.5)
     sample_num += 1
     t += 1.0 / sample_rate 
 
@@ -78,10 +78,10 @@ while sample_num < 3000:
 ts = [t / sample_rate * decimation_factor * 1000 for t in range(len(sin))] 
 #plt.plot(ts, sin, label='Python Input')
 #plt.plot(ts, cic, label='python CIC')
-#plt.plot(t_v*1e-4, y_cic/2**16, label='Verilog CIC',  linewidth=1.0)
-plt.plot(t_v*1e-4, y_hb1/2**16, label='Verilog HB1',  linewidth=1.0)
-plt.step(t_v*1e-4, y_hb2/2**18, label='Verilog HB2',  linewidth=2.0)
-plt.step(t_v*1e-4, y_fir/2**18, label='Verilog FIR',  linewidth=1.0)
+plt.plot(t_v*1e-4, y_cic/2**16, label='Verilog CIC',  linewidth=1)
+plt.plot(t_v*1e-4, y_hb1/2**17, label='Verilog HB1',  linewidth=1)
+plt.step(t_v*1e-4, y_hb2/2**18, label='Verilog HB2',  linewidth=1.5)
+plt.step(t_v*1e-4, y_fir/2**18, label='Verilog FIR',  linewidth=1.5)
 plt.xlabel('Time (ms)')
 plt.ylim(-0.05,1.05)
 plt.legend()
