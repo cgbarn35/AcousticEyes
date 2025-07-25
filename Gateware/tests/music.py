@@ -34,8 +34,8 @@ t = np.arange(n) / fclk
 
 
 with open('music.dat','wb') as f:
-    for f_sin in range(1000,21000,1000):
-        x = 0.5 + 0.49 * np.sin(2*np.pi*f_sin*t)
-        y = pdm(x)
-        #y = ds2(x,1,1.5)
-        f.write(int(''.join(map(lambda x:str(int(x)),y)),2).to_bytes(n//8,'big'))
+    f_sin = 2000
+    x = 0.5 + 0.45 * np.sin(2*np.pi*f_sin*t)
+    y = pdm(x)
+    #y = ds2(x,1,1.5)
+    f.write(int(''.join(map(lambda x:str(int(x)),y)),2).to_bytes(n//8,'big'))

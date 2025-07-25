@@ -12,6 +12,10 @@ module FIR_COMB (
 wire HB1CLK;
 wire HB2CLK;
 wire FIRCLK;
+reg [16:0] CIC_OUT;
+reg [17:0] HB1_OUT;
+reg [17:0] HB2_OUT;
+reg [15:0] FIR_OUT;
 
 ClockDivider #(1) C1 (//HALFBAND 1 CLOCK DIVIDER
         CICCLK,
@@ -60,7 +64,7 @@ reg signed [47:0] HB2R[14:0];//HB2 Sum Registers
 integer i;
 //Halfband 1 Delay Registers
 always @(posedge CICCLK or posedge RST) begin 
-        if(rst) for(i = 0; i < 10; i = i + 1) HB1D[i] <= 0;
+        if(RST) for(i = 0; i < 10; i = i + 1) HB1D[i] <= 0;
         else begin 
                 for(i = 1; i< 10; i = i + 1) HB1D[i] <= HB1D[i-1];
                 HB1D[0] <= {1'b0,x_in};//Q1.17
@@ -69,9 +73,9 @@ end
  
 //HalfBand 2 Delay Registers
 always @(posedge HB1CLK or posedge RST) begin 
-        if(rst) for(i = 0; i < 26; i = i + 1) HB2D[i] <= 0;                
+        if(RST) for(i = 0; i < 26; i = i + 1) HB2D[i] <= 0;                
         else begin
-                for(i = 1; i < 26; i = i + 1) HB2D[i] <= D[i-1];
+                for(i = 1; i < 26; i = i + 1) HB2D[i] <= HB2D[i-1];
                 HB2D[0] <= {{1{1'b0}},x_in};
         end
 end
@@ -80,13 +84,15 @@ end
 
 
 always @(posedge HB1CLK or posedge RST) begin 
-        if(rst) HB1_OUT <= 0;
+        if(RST) HB1_OUT <= 0;
         else    HB1_OUT <= HB1R[6]>>16;
 end
 
 
 always @(posedge HB2CLK or posedge RST) begin 
-        if(rst) HB2_OUT <= 0;
+        if(RST) HB2_OUT <= 0;
         else    HB2_OUT <= HB2R[14]>>18;
 end
 
+
+endmodule

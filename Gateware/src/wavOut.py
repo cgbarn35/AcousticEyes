@@ -13,10 +13,9 @@ with open('pdm.csv', 'r') as f:
     data = list(reader)
     t = np.asarray([float(row[0]) for row in data], dtype=float)
     x = np.asarray([float(row[1]) for row in data], dtype=float)
-    print("pdm.csv read")
     print(len(x))
 
-fir_sample = 44100
+fir_sample = 48800
 with wave.open('fir.wav','w') as w:
     w.setnchannels(1) 
     w.setsampwidth(2) #16 bits

@@ -2,11 +2,11 @@ TARGET = pdm pdm.vcd pdm.dat pdm.csv pdm.mem music music.dat fir.wav
 CC = iverilog -g2012
 PY = python3
 PDM = tests/pdm.sv
-MUSIC = tests/music.sv
 PDMPY = tests/pdm.py
 GRAPHPY = src/ref.py
+MUSIC = tests/music.sv
 MUSICPY = src/wavOut.py
-SRC = src/cic.v src/fir.v src/clkdiv.v
+SRC = src/cic.v src/fir.v src/clkdiv.v src/fir_comb.v
 
 
 all: build
@@ -16,18 +16,18 @@ music: $(SRC) $(MUSIC) music.dat
 	./music
 	$(PY) $(MUSICPY)
 
-graph: test
+graph: pdm.vcd
 	$(PY) $(GRAPHPY)
 
-test: build
+pdm: $(SRC) $(PDM) 
+	$(CC) $(SRC) $(PDM) -o pdm
+
+pdm.vcd: pdm $(PDMPY)
 	$(PY) $(PDMPY)
 	./pdm
 
 music.dat: 
 	$(PY) tests/music.py
-
-build: $(SRC) $(PDM) #TODO ADD MORE BUILDING HERE
-	$(CC) $(SRC) $(PDM) -o pdm
 
 clean:
 	rm -f $(TARGET) 

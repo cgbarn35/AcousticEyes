@@ -3,7 +3,7 @@
  
 module MusicTest;
 
-parameter dataLength = 10000000;
+parameter dataLength = 2000000;
 initial begin
         //$dumpfile("music.vcd");
 	//$dumpvars;
