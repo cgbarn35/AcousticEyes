@@ -6,7 +6,7 @@ module PDMTest;
 parameter HzCount = 20;
 parameter FreqSet = 1;
 initial begin 
-	$dumpfile("out.vcd");
+	$dumpfile("pdm.vcd");
 	$dumpvars;
 end
 
@@ -23,7 +23,7 @@ wire CLKDIVF0;
 wire [16:0] CIC_OUT [HzCount:0];
 wire [17:0] HB1_OUT [HzCount:0];
 wire [17:0] HB2_OUT [HzCount:0];
-wire [17:0] FIR_OUT [HzCount:0];
+wire [15:0] FIR_OUT [HzCount:0];
 //FILE CONTENTS
 integer fd;
 integer csv;
@@ -85,16 +85,16 @@ generate
 		.x_in(HB1_OUT[i]),
 		.y_out(HB2_OUT[i])
 		);
+	F_FIR uutF(
+		.clk(CLKDIVH2),
+		.clkdiv(CLKDIVF0),
+		.rst(RST),
+		.x_in(HB2_OUT[i]),
+		.y_out(FIR_OUT[i])
+	);
 	end
 endgenerate
 
-F_FIR F0(
-	.clk(CLKDIVH2),
-	.clkdiv(CLKDIVF0),
-	.rst(RST),
-	.x_in(HB2_OUT[FreqSet]),
-	.y_out(FIR_OUT[FreqSet])
-	);
 
 //TEST DATA GENERATED
 initial begin 

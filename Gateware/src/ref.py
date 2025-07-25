@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import csv
 import math
 import bitarray
+import wave
+import struct
 
 
 #TRASH CODE, WILL REFACTOR EVENTUALLY, CAN DO SMALL VISUALIZATION
@@ -72,16 +74,23 @@ while sample_num < 3000:
     sample_num += 1
     t += 1.0 / sample_rate 
 
+fir_sample = 48800.0
+with wave.open('fir.wav','w') as w:
+    w.setnchannels(1) 
+    w.setsampwidth(2) #16 bits
+    w.setframerate(fir_sample)
+    for sample in y_fir:
+        w.writeframes(struct.pack('<h', int(sample)-32768)) #magic number for half of 16 bits
 
 
     
 ts = [t / sample_rate * decimation_factor * 1000 for t in range(len(sin))] 
 plt.plot(ts, sin, label='Python Input')
 #plt.plot(ts, cic, label='python CIC')
-plt.plot(t_v*1e-4, y_cic/2**16, label='Verilog CIC',  linewidth=1)
-plt.plot(t_v*1e-4, y_hb1/2**17, label='Verilog HB1',  linewidth=1)
-plt.step(t_v*1e-4, y_hb2/2**18, label='Verilog HB2',  linewidth=1.5)
-plt.step(t_v*1e-4, y_fir/2**18, label='Verilog FIR',  linewidth=1.5)
+#plt.plot(t_v*1e-4, y_cic/2**16, label='Verilog CIC',  linewidth=1)
+#plt.plot(t_v*1e-4, y_hb1/2**17, label='Verilog HB1',  linewidth=1)
+#plt.step(t_v*1e-4, y_hb2/2**18, label='Verilog HB2',  linewidth=1.5)
+plt.step(t_v*1e-4, y_fir/2**16, label='Verilog FIR',  linewidth=1.5)
 plt.xlabel('Time (ms)')
 plt.ylim(-0.05,1.05)
 plt.legend()

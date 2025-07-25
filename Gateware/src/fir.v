@@ -107,7 +107,7 @@ module F_FIR(
 	input clkdiv,
 	input rst,
 	input signed [17:0] x_in,
-	output reg signed [17:0] y_out 
+	output reg signed [15:0] y_out 
 );
 
 //Q8.17
@@ -166,7 +166,7 @@ MACBlock m27(FIRcoff7,D[26],r[26],r[27]);
 MACBlock m28(FIRcoff6,D[27],r[27],r[28]);
 MACBlock m29(FIRcoff5,D[28],r[28],r[29]);
 MACBlock m30(FIRcoff4,D[29],r[29],r[30]);
-MACBlock m31(FIRcoff3,D[20],r[30],r[31]);
+MACBlock m31(FIRcoff3,D[30],r[30],r[31]);
 MACBlock m32(FIRcoff2,D[31],r[31],r[32]);
 MACBlock m33(FIRcoff1,D[32],r[32],r[33]);
 MACBlock m34(FIRcoff0,D[33],r[33],r[34]);
@@ -179,18 +179,16 @@ always @(posedge clk or posedge rst) begin
 	end
         else begin
 		for(i = 1; i < 34; i = i + 1) D[i] <= D[i-1];
-                D[0] <= {{1{1'b0}},x_in};
+                D[0] <= x_in;
 	end
 end
-initial begin 
-	y_out <= 0;
-end
+
 always @(posedge clkdiv or posedge rst) begin 
 	if(rst) begin 
 		y_out <= 0;
 	end 
 	else begin 
-		y_out <= r[34]>>18;
+		y_out <= r[34]>>20;
 	end
 end
 
