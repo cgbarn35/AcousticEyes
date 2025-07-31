@@ -1,4 +1,4 @@
-TARGET = pdm pdm.vcd pdm.dat pdm.csv pdm.mem music music.dat fir.wav
+TARGET = pdm pdm.vcd pdm.dat pdm.csv pdm.mem music music.dat music.csv fir.wav
 CC = iverilog -g2012
 PY = python3
 PDM = tests/pdm.sv

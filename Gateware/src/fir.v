@@ -104,7 +104,6 @@ endmodule
 
 module F_FIR(
 	input clk,
-	input clkdiv,
 	input rst,
 	input signed [17:0] x_in,
 	output reg signed [15:0] y_out 
@@ -179,7 +178,7 @@ always @(posedge clk or posedge rst) begin
 	end
 end
 
-always @(posedge clkdiv or posedge rst) begin 
+always @(posedge clk or posedge rst) begin 
 	if(rst) y_out <= 0;
 	else 	y_out <= r[34]>>18;
 end

@@ -4,7 +4,7 @@
 module PDMTest;
 
 parameter HzCount = 20;
-parameter FreqSet = 11;
+parameter FreqSet = 19;
 initial begin 
 	$dumpfile("pdm.vcd");
 	$dumpvars;
@@ -19,7 +19,6 @@ reg sftData [HzCount:0];
 wire CLKDIVC1;
 wire CLKDIVH1;
 wire CLKDIVH2;
-wire CLKDIVF0;
 wire [16:0] CIC_OUT [HzCount:0];
 wire [17:0] HB1_OUT [HzCount:0];
 wire [17:0] HB2_OUT [HzCount:0];
@@ -32,29 +31,24 @@ genvar i;
 reg [10000:0] testData [0:HzCount];
 wire [10000:0] testTemp;
 assign testTemp = testData[0];
-
+//3.072MHz TODO
+//3.125MHz -> 195.3KHz
 ClockDivider #(8) C0 (//CIC FILTER CLOCK DIVIDER
 	CLK,
 	RST,
 	CLKDIVC1
 	);
-
+//195.3KHz -> 97.656KHz
  ClockDivider #(1) C1 (//HALFBAND 1 CLOCK DIVIDER
 	CLKDIVC1,
 	RST,
 	CLKDIVH1
 	);
-
+//97.656KHz -> 48.828Khz
  ClockDivider #(1) C2 (//HALFBAND 2 CLOCK DIVIDER
 	CLKDIVH1,
 	RST,
 	CLKDIVH2
-	);
-
-  ClockDivider #(1) C3 (//FIR OUT CLOCK DIVIDER
-	CLKDIVH2,
-	RST,
-	CLKDIVF0
 	);
 
 //FILTERS GENERATED
@@ -87,7 +81,6 @@ generate
 		);
 	F_FIR uutF(
 		.clk(CLKDIVH2),
-		.clkdiv(CLKDIVF0),
 		.rst(RST),
 		.x_in(HB2_OUT[i]),
 		.y_out(FIR_OUT[i])
@@ -109,7 +102,7 @@ end
 
 //Python Test Data Read
 
-always @(posedge CLKDIVC1) begin 
+always @(posedge CLKDIVH2) begin 
 	$display("%d,%d,%d,%d,%d",$time,CIC_OUT[FreqSet],HB1_OUT[FreqSet],HB2_OUT[FreqSet],FIR_OUT[FreqSet]);
 	$fwrite(csv,"%d,%d,%d,%d,%d\n",$time,CIC_OUT[FreqSet],HB1_OUT[FreqSet],HB2_OUT[FreqSet],FIR_OUT[FreqSet]);
 end

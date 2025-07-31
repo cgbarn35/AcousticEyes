@@ -18,7 +18,6 @@ reg sftData;
 wire CLKDIVC1;
 wire CLKDIVH1;
 wire CLKDIVH2;
-wire CLKDIVF0;
 wire [16:0] CIC_OUT;
 wire [17:0] HB1_OUT;
 wire [17:0] HB2_OUT;
@@ -49,12 +48,6 @@ ClockDivider #(8) C0 (//CIC FILTER CLOCK DIVIDER
         CLKDIVH2
         );
 
-  ClockDivider #(1) C3 (//FIR OUT CLOCK DIVIDER
-        CLKDIVH2,
-        RST,
-        CLKDIVF0
-        );
-
 
 
 
@@ -83,7 +76,6 @@ CICNR16 #(4) uutC (
 
 F_FIR F0(
         .clk(CLKDIVH2),
-        .clkdiv(CLKDIVF0),
         .rst(RST),
         .x_in(HB2_OUT),
         .y_out(FIR_OUT)
@@ -97,13 +89,13 @@ initial begin
 	else   $display("file not opened %0d",fd);
 	$fread(testData,fd);
         $fclose(fd);
-        csv = $fopen("./pdm.csv","w");
+        csv = $fopen("./music.csv","w");
         if(csv) $display("file opened successfully %0d",csv);
         else   $display("file not opened %0d",csv);
 end
 
 
-always @(posedge CLKDIVF0) begin 
+always @(posedge CLKDIVH2) begin 
         //$display("%d,%d",$time,FIR_OUT);
         $fwrite(csv,"%d,%d\n",$time,FIR_OUT);
 end
