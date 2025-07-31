@@ -27,7 +27,7 @@ def pdm(x):
     return y
 
 n = 10000;
-fclk = 3125000
+fclk = 3072000
 t = np.arange(n) / fclk 
 
 with open('pdm.dat','wb') as f, open('pdm.mem','w') as f2:

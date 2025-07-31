@@ -29,7 +29,7 @@ def pdm(x):
 
 
 n = 10000000;
-fclk = 3125000
+fclk = 3072000
 t = np.arange(n) / fclk 
 
 

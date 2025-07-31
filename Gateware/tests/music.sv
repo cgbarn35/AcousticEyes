@@ -1,5 +1,5 @@
 `timescale 100ns / 10ps
-`define HalfClockPeriod 1.6
+`define HalfClockPeriod 1.6275
  
 module MusicTest;
 
