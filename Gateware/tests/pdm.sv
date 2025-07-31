@@ -4,7 +4,7 @@
 module PDMTest;
 
 parameter HzCount = 20;
-parameter FreqSet = 1;
+parameter FreqSet = 11;
 initial begin 
 	$dumpfile("pdm.vcd");
 	$dumpvars;
@@ -62,7 +62,7 @@ generate
 	for(i = 0; i < HzCount; i = i + 1) begin: Filters 
 	wire [15:0] outT;
 	wire sftT;
-	assign outT = CIC_OUT[i];
+	assign outT = FIR_OUT[i];
 	assign sftT = sftData[i];
 	CICNR16 #(4) uutC (
 		.clk(CLK),

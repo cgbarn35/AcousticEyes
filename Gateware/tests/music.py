@@ -34,7 +34,7 @@ t = np.arange(n) / fclk
 
 
 with open('music.dat','wb') as f:
-    f_sin = 2000
+    f_sin = 440
     x = 0.5 + 0.45 * np.sin(2*np.pi*f_sin*t)
     y = pdm(x)
     #y = ds2(x,1,1.5)

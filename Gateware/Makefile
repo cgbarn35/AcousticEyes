@@ -5,7 +5,8 @@ PDM = tests/pdm.sv
 PDMPY = tests/pdm.py
 GRAPHPY = src/ref.py
 MUSIC = tests/music.sv
-MUSICPY = src/wavOut.py
+MUSICPY = tests/music.py
+WAVPY = src/wavOut.py
 SRC = src/cic.v src/fir.v src/clkdiv.v src/fir_comb.v
 
 
@@ -14,7 +15,7 @@ all: build
 music: $(SRC) $(MUSIC) music.dat
 	$(CC) $(SRC) $(MUSIC) -o music
 	./music
-	$(PY) $(MUSICPY)
+	$(PY) $(WAVPY)
 
 graph: pdm.vcd
 	$(PY) $(GRAPHPY)
@@ -26,8 +27,8 @@ pdm.vcd: pdm $(PDMPY)
 	$(PY) $(PDMPY)
 	./pdm
 
-music.dat: 
-	$(PY) tests/music.py
+music.dat: $(MUSICPY)
+	$(PY) $(MUSICPY)
 
 clean:
 	rm -f $(TARGET) 

@@ -61,9 +61,9 @@ reg signed [24:0] HB2coff2 = 25'h1FFFEFA;
 reg signed [24:0] HB2coff4 = 25'h0000367;
 reg signed [24:0] HB2coff6 = 25'h1FFF725;
 reg signed [24:0] HB2coff8 = 25'h0001431;
-reg signed [24:0] HB2coff10 = 25'h1FFD222;
-reg signed [24:0] HB2coff12 = 25'h0009FF6;
-reg signed [24:0] HB2coff13 = 25'h0010000;
+reg signed [24:0] HB2coffA = 25'h1FFD222;
+reg signed [24:0] HB2coffC = 25'h0009FF6;
+reg signed [24:0] HB2coffD = 25'h0010000;
 
 reg[17:0] D[25:0]; //Delay Registers
 reg[47:0] r[14:0];//Sum Registers
@@ -74,16 +74,16 @@ MACBlock m1(HB2coff2,D[1],r[0],r[1]);
 MACBlock m2(HB2coff4,D[3],r[1],r[2]);
 MACBlock m3(HB2coff6,D[5],r[2],r[3]);
 MACBlock m4(HB2coff8,D[7],r[3],r[4]);
-MACBlock m5(HB2coff10,D[9],r[4],r[5]);
-MACBlock m6(HB2coff12,D[11],r[5],r[6]);
-MACBlock m7(HB2coff13,D[12],r[6],r[7]);
-MACBlock m8(HB2coff12,D[13],r[7],r[8]);
-MACBlock m9(HB2coff10,D[15],r[8],r[9]);
-MACBlock m10(HB2coff8,D[17],r[9],r[10]);
-MACBlock m11(HB2coff6,D[19],r[10],r[11]);
-MACBlock m12(HB2coff4,D[21],r[11],r[12]);
-MACBlock m13(HB2coff2,D[23],r[12],r[13]);
-MACBlock m14(HB2coff0,D[25],r[13],r[14]);
+MACBlock m5(HB2coffA,D[9],r[4],r[5]);
+MACBlock m6(HB2coffC,D[11],r[5],r[6]);
+MACBlock m7(HB2coffD,D[12],r[6],r[7]);
+MACBlock m8(HB2coffC,D[13],r[7],r[8]);
+MACBlock m9(HB2coffA,D[15],r[8],r[9]);
+MACBlock mA(HB2coff8,D[17],r[9],r[10]);
+MACBlock mB(HB2coff6,D[19],r[10],r[11]);
+MACBlock mC(HB2coff4,D[21],r[11],r[12]);
+MACBlock mD(HB2coff2,D[23],r[12],r[13]);
+MACBlock mE(HB2coff0,D[25],r[13],r[14]);
 
 
 integer i;
@@ -129,8 +129,6 @@ reg signed [24:0] FIRcoffE = 25'h1ffce83;
 reg signed [24:0] FIRcoffF = 25'h1fff5e5;
 reg signed [24:0] FIRcoffG = 25'h000a14e;
 reg signed [24:0] FIRcoffH = 25'h0010a7a;
-
-
 
 reg[17:0] D[33:0]; //Delay Registers
 reg[47:0] r[34:0];//Sum Registers
@@ -187,9 +185,6 @@ always @(posedge clkdiv or posedge rst) begin
 end
 
 endmodule
-
-
-
 
 module MACBlock ( //TEMPORARY FOR IVERILOG COMPILATION
 	input signed [24:0] a,
