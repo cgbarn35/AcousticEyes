@@ -84,12 +84,12 @@ F_FIR F0(
 
 
 initial begin 
-	fd = $fopen("./music.dat","rb");
+	fd = $fopen("../../../../build/music.dat","rb");
 	if(fd) $display("file opened successfully %0d",fd);
 	else   $display("file not opened %0d",fd);
 	$fread(testData,fd);
         $fclose(fd);
-        csv = $fopen("./music.csv","w");
+        csv = $fopen("../../../../build/music.csv","w");
         if(csv) $display("file opened successfully %0d",csv);
         else   $display("file not opened %0d",csv);
 end

@@ -7,6 +7,8 @@ import bitarray
 import wave
 import struct
 
+path = '../../../../build/'
+
 
 #TRASH CODE, WILL REFACTOR EVENTUALLY, CAN DO SMALL VISUALIZATION
 
@@ -37,7 +39,7 @@ def process_sample_cic(x):
 
 
 def pull_pdm(n):
-    with open('pdm.dat','rb') as f:
+    with open(path+'pdm.dat','rb') as f:
         byteCount = 10000//8
         f.seek(n*byteCount)#magic number, 1250 is 10000 bits
         data = f.read(byteCount)
@@ -46,7 +48,7 @@ def pull_pdm(n):
     return ba
         
 
-with open('pdm.csv', 'r') as f:
+with open(path+'pdm.csv', 'r') as f:
     reader = csv.reader(f)
     data = list(reader)
     freq_count = int(data[0][4])
@@ -74,16 +76,6 @@ while sample_num < 3000:
     sample_num += 1
     t += 1.0 / sample_rate 
 
-fir_sample = 48800.0
-with wave.open('fir.wav','w') as w:
-    w.setnchannels(1) 
-    w.setsampwidth(2) #16 bits
-    w.setframerate(fir_sample)
-    for sample in y_fir:
-        w.writeframes(struct.pack('<h', int(sample)-32768)) #magic number for half of 16 bits
-
-
-    
 ts = [t / sample_rate * decimation_factor * 1000 for t in range(len(sin))] 
 plt.plot(ts, sin, label='Python Input')
 #plt.plot(ts, cic, label='python CIC')

@@ -6,9 +6,9 @@ import bitarray
 import wave 
 import struct
 
+path = '../../../../build/'
 
-
-with open('music.csv', 'r') as f:
+with open(path+'music.csv', 'r') as f:
     reader = csv.reader(f)
     data = list(reader)
     t = np.asarray([float(row[0]) for row in data], dtype=float)
@@ -16,7 +16,7 @@ with open('music.csv', 'r') as f:
     print(len(x))
 
 fir_sample = 48000
-with wave.open('fir.wav','w') as w:
+with wave.open(path+'out.wav','w') as w:
     w.setnchannels(1) 
     w.setsampwidth(2) #16 bits
     w.setframerate(fir_sample)

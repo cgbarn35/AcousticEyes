@@ -1,7 +1,8 @@
 import numpy as np
 import re 
+import sys
 
-
+path = '../../../../build/'
 
 def ds2(x,A,B,ffA=0,ffB=0,ffC=0,R=1):
     n = len(x)
@@ -33,8 +34,8 @@ fclk = 3072000
 t = np.arange(n) / fclk 
 
 
-with open('music.dat','wb') as f:
-    f_sin = 12000
+with open(path+'music.dat','wb') as f:
+    f_sin = int(sys.argv[1])
     x = 0.5 + 0.45 * np.sin(2*np.pi*f_sin*t)
     y = pdm(x)
     #y = ds2(x,1,1.5)

@@ -1,12 +1,12 @@
 `timescale 100ns / 10ps
 `define HalfClockPeriod 1.6275
 
-module PDMTest;
+module pdm;
 
 parameter HzCount = 20;
 parameter FreqSet = 19;
 initial begin 
-	$dumpfile("pdm.vcd");
+	$dumpfile("../../../../build/pdm.vcd");
 	$dumpvars;
 end
 
@@ -91,10 +91,10 @@ endgenerate
 
 //TEST DATA GENERATED
 initial begin 
-	$readmemb("pdm.mem",testData);
+	$readmemb("../../../../build/pdm.mem",testData);
 	//$display("data read %b",testData);
 	$fclose(fd);
-	csv = $fopen("./pdm.csv","w");
+	csv = $fopen("../../../../build/pdm.csv","w");
 	if(csv) $display("file opened successfully %0d",csv);
 	else   $display("file not opened %0d",csv);
 	$fwrite(csv,"0,0,0,0,%d\n",FreqSet);

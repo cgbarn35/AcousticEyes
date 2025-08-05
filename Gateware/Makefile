@@ -1,34 +1,16 @@
-TARGET = pdm pdm.vcd pdm.dat pdm.csv pdm.mem music music.dat music.csv fir.wav
-CC = iverilog -g2012
-PY = python3
-PDM = tests/pdm.sv
-PDMPY = tests/pdm.py
-GRAPHPY = src/ref.py
-MUSIC = tests/music.sv
-MUSICPY = tests/music.py
-WAVPY = src/wavOut.py
-SRC = src/cic.v src/fir.v src/clkdiv.v src/fir_comb.v
+DSP_RTL_DIR = src/dsp/rtl
+DSP_TB_DIR =  src/dsp/tb
+MISC_RTL_DIR = src/misc/rtl
+BUILD_DIR = build
 
-
-all: build
-
-music: $(SRC) $(MUSIC) music.dat
-	$(CC) $(SRC) $(MUSIC) -o music
-	./music
-	$(PY) $(WAVPY)
-
-graph: pdm.vcd
-	$(PY) $(GRAPHPY)
-
-pdm: $(SRC) $(PDM) 
-	$(CC) $(SRC) $(PDM) -o pdm
-
-pdm.vcd: pdm $(PDMPY)
-	$(PY) $(PDMPY)
-	./pdm
-
-music.dat: $(MUSICPY)
-	$(PY) $(MUSICPY)
-
+music:
+	make -C $(DSP_TB_DIR)/fir_music/ FREQ=$(FREQ)
+	audacity $(BUILD_DIR)/out.wav
+pdm:
+	make -C $(DSP_TB_DIR)/fir_pdm/
 clean:
-	rm -f $(TARGET) 
+	rm build/*
+
+
+
+.PHONY: music pdm

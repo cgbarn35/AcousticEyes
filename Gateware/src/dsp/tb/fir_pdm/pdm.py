@@ -1,6 +1,7 @@
 import numpy as np 
 import re
 
+path = '../../../../build/'
 
 def ds2(x,A,B,ffA=0,ffB=0,ffC=0,R=1):
     n = len(x)
@@ -30,7 +31,7 @@ n = 10000;
 fclk = 3072000
 t = np.arange(n) / fclk 
 
-with open('pdm.dat','wb') as f, open('pdm.mem','w') as f2:
+with open(path+'pdm.dat','wb') as f, open(path+'pdm.mem','w') as f2:
     for f_sin in range(1000, 21000, 1000):
         x = 0.5 + 0.49 * np.sin(2*np.pi*f_sin*t)
         y = pdm(x) 
