@@ -12,6 +12,14 @@ module FIR_COMB (
 wire HB1CLK;
 wire HB2CLK;
 wire FIRCLK;
+reg wr_en;
+reg rd_en;
+reg [17:0] a_in;
+reg [24:0] b_in;
+reg [17:0] mac_a;
+reg [24:0] mac_b;
+reg full;
+reg empty;
 reg [16:0] CIC_OUT;
 reg [17:0] HB1_OUT;
 reg [17:0] HB2_OUT;
@@ -34,6 +42,20 @@ ClockDivider #(1) C1 (//HALFBAND 1 CLOCK DIVIDER
         RST,
         FIRCLK
         );
+
+	//43 = 25 + 18 bit width
+  sync_fifo #(.WIDTH(43),.DEPTH(32)) F0 (
+	  .clk(MACCLK),
+	  .rst(RST),
+	  .wr_en(wr_en),
+          .rd_en(rd_en),
+          .d_in({a_in,b_in}),
+          .d_out({mac_a,mac_b}),
+	  .full(full),
+	  .empty(empty)
+  );
+
+
  
 //Q8.17
 reg signed [24:0] HB1coff0 = 25'h0000413;
@@ -79,6 +101,25 @@ reg signed [17:0] FIRD[33:0];//FIR Delay Registers
 reg signed [47:0] FIRR[34:0];//FIR Sum Registers
 
 //TODO SEQUENTIAL LOGIC
+
+
+//FIFO OUTPUT
+always @(posedge MACCLK or posedge RST) begin
+	if(RST) begin
+		rd_en <= 0;
+	end
+		else begin 
+			if(!empty) begin 
+				rd_en <= 1;
+				
+
+
+			end
+			else rd_en <= 0;
+		end
+
+	end
+
 
 
 integer i;

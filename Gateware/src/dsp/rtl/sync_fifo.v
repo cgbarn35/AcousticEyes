@@ -1,14 +1,12 @@
 `timescale 1ns / 1ps
 
-module sync_fifo #(parameter AWIDTH = 18, BWIDTH = 25, DEPTH = 32)(
+module sync_fifo #(parameter WIDTH = 18, DEPTH = 32)(
 	input clk,
 	input rst,
 	input wr_en,
 	input rd_en,
-	input reg [AWIDTH-1:0] a_in,
-	input reg [BWIDTH-1:0] b_in,
-	output reg [AWIDTH-1:0] a_out,
-	output reg [BWIDTH-1:0] b_out,
+	input reg [WIDTH-1:0] d_in,
+	output reg [WIDTH-1:0] d_out,
 	output empty,
 	output full
 );
@@ -16,8 +14,7 @@ module sync_fifo #(parameter AWIDTH = 18, BWIDTH = 25, DEPTH = 32)(
 reg [$clog2(DEPTH):0] wr_ptr;
 reg [$clog2(DEPTH):0] rd_ptr;
 
-reg [AWIDTH-1:0] aMEM [0:DEPTH-1];
-reg [BWIDTH-1:0] bMEM [0:DEPTH-1];
+reg [WIDTH-1:0] fifo [0:DEPTH-1];
 
 initial begin 
 	wr_ptr <= 0;
@@ -29,8 +26,7 @@ always @(posedge clk) begin
 		wr_ptr <= 0;
 	end else begin 
 		if(wr_en & !full) begin 
-			aMEM[wr_ptr] <= a_in;
-			bMEM[wr_ptr] <= b_in;
+			fifo[wr_ptr] <= d_in;
 			wr_ptr <= wr_ptr + 1;
 		end
 	end
@@ -41,8 +37,7 @@ always @(posedge clk) begin
 		rd_ptr <= 0;
 	end else begin 
 		if(rd_en & !empty) begin
-			a_out <= aMEM[rd_ptr];
-			b_out <= bMEM[rd_ptr];
+			d_out <= fifo[rd_ptr];
                         rd_ptr <= rd_ptr + 1;
 		end
         end

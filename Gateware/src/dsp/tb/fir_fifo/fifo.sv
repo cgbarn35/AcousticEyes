@@ -28,15 +28,13 @@ reg full;
 //FILE CONTENTS
 
 
-sync_fifo #(.AWIDTH(18), .BWIDTH(25), .DEPTH(32)) uutF (
+sync_fifo #(.WIDTH(43), .DEPTH(32)) uutF (
 	.clk(CLK),
 	.rst(RST),
 	.wr_en(wr_en),
 	.rd_en(rd_en),
-	.a_in(a_in),
-	.b_in(b_in),
-	.a_out(a_out),
-	.b_out(b_out),
+	.d_in({a_in,b_in}),
+	.d_out({a_out,b_out}),
 	.empty(empty),
 	.full(full)
         );
