@@ -184,18 +184,3 @@ always @(posedge clk or posedge rst) begin
 end
 
 endmodule
-
-module MACBlock ( //TEMPORARY FOR IVERILOG COMPILATION
-	input signed [24:0] a,
-	input signed [17:0] b,
-	input signed [47:0] c,
-	output signed [47:0] out
-);
-//TODO INTRODUCE ACTUAL DSP48E FUNCTIONALITY
-assign out = (a*b) + c;
-endmodule
-
-
-
-
-

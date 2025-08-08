@@ -13,11 +13,11 @@ wire HB1CLK;
 wire OUTCLK;
 reg wr_en;
 reg rd_en;
-reg [17:0] a_in;
-reg [24:0] b_in;
+reg [24:0] a_in;
+reg [17:0] b_in;
 reg [5:0] fifo_state_in;
-reg [17:0] mac_a;
-reg [24:0] mac_b;
+reg [24:0] mac_a;
+reg [17:0] mac_b;
 reg [5:0] fifo_state_out;
 reg full;
 reg empty;
@@ -51,7 +51,7 @@ ClockDivider #(1) C1 (//HALFBAND 1 CLOCK DIVIDER
 	  .empty(empty)
   );
 
-MACBlock m0 (mac_b,mac_a,48'h0,mac_out);
+MACBlock m0 (mac_a,mac_b,48'h0,mac_out);
  
 //Q8.17
 reg signed [24:0] HB1coff0 = 25'h0000413;
@@ -234,7 +234,7 @@ always @(posedge MACCLK or posedge RST) begin
 
 	end
 	else begin 
-		case(fifo_state_out)
+		case(fifo_state_out)//TODO DET MACD
 			//
 			6'h0: begin HB1R[0] <= mac_out; end
 			6'h1: begin HB1R[1] <= mac_out; end
