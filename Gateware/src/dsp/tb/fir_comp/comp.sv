@@ -2,7 +2,7 @@
 `define PDMClockPeriod 1.6275
 `define MACClockPeriod 0.9
 
-module pdm;
+module comp;
 
 parameter N = 20;
 parameter FreqSet = 10;

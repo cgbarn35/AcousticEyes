@@ -171,7 +171,7 @@ always @(posedge MACCLK or posedge RST) begin
 			wr_en <= 1;
 			case(FIRState)
 			6'h0 : begin wr_en <= 1;
-			      {a_in,b_in,fifo_state_in} <= {FIRcoff0,HB2_OUT,6'h16}; FIRState <= 6'h1; end
+			      	    {a_in,b_in,fifo_state_in} <= {FIRcoff0,HB2_OUT,6'h16}; FIRState <= 6'h1; end
 			6'h1: begin {a_in,b_in,fifo_state_in} <= {FIRcoff1,FIRD[0],6'h17}; FIRState <= 6'h2; end
 			6'h2: begin {a_in,b_in,fifo_state_in} <= {FIRcoff2,FIRD[1],6'h18}; FIRState <= 6'h3; end
 			6'h3: begin {a_in,b_in,fifo_state_in} <= {FIRcoff3,FIRD[1],6'h19}; FIRState <= 6'h4; end
@@ -231,7 +231,9 @@ end
 //MAC State Machine
 always @(posedge MACCLK or posedge RST) begin
 	if(RST) begin 
-
+		for(i = 0; i < 7; i = i + 1) HB1R[i] <= 0;
+		for(i = 0; i < 15; i = i + 1) HB2R[i] <= 0;
+		for(i = 0; i < 35; i = i + 1) FIRR[i] <= 0;
 	end
 	else begin 
 		case(fifo_state_out)//TODO DET MACD
@@ -365,7 +367,7 @@ always @(posedge OUTCLK or posedge RST) begin
 		FIRR[7] + FIRR[8] + FIRR[9] + FIRR[10] + FIRR[11] + FIRR[12] + FIRR[13] + 
 		FIRR[14] + FIRR[15] + FIRR[16] + FIRR[17] + FIRR[18] + FIRR[19] + FIRR[20] + 
 		FIRR[21] + FIRR[22] + FIRR[23] + FIRR[24] + FIRR[25] + FIRR[26] + FIRR[27] + 
-		FIRR[28] + FIRR[29] + FIRR[30] + FIRR[31] + FIRR[33] + FIRR[34] + FIRR[34])>>18;
+		FIRR[28] + FIRR[29] + FIRR[30] + FIRR[31] + FIRR[33] + FIRR[34] + FIRR[34])>>17;
 end
 
 endmodule

@@ -8,6 +8,7 @@ BUILD_DIR = ../../../../build
 
 VERILOG_SOURCES += $(RTL_DIR)/cic.v
 VERILOG_SOURCES += $(RTL_DIR)/fir.v
+VERILOG_SOURCES += $(RTL_DIR)/mac.v
 VERILOG_SOURCES += $(RTL_DIR)/clkdiv.v
 VERILOG_SOURCES += $(DUT).sv 
 
