@@ -8,7 +8,8 @@ music:
 	audacity $(BUILD_DIR)/out.wav
 pdm:
 	make -C $(DSP_TB_DIR)/fir_pdm/
-
+pdm_c: 
+	make -C $(DSP_TB_DIR)/fir_pdm_comb/
 fifo:
 	make -C $(DSP_TB_DIR)/fir_fifo/
 clean:

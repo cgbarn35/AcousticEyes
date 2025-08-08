@@ -11,10 +11,10 @@ module sync_fifo #(parameter WIDTH = 18, DEPTH = 32)(
 	output full
 );
 
-reg [$clog2(DEPTH):0] wr_ptr;
-reg [$clog2(DEPTH):0] rd_ptr;
+reg [$clog2(DEPTH)-1:0] wr_ptr;
+reg [$clog2(DEPTH)-1:0] rd_ptr;
 
-reg [WIDTH-1:0] fifo [0:DEPTH-1];
+reg [WIDTH-1:0] fifo [DEPTH-1:0];
 
 initial begin 
 	wr_ptr <= 0;
@@ -44,7 +44,7 @@ always @(posedge clk) begin
 end
 
 assign empty = wr_ptr == rd_ptr;
-assign full = wr_ptr + 1 == rd_ptr;
+assign full = (wr_ptr + 1) == rd_ptr;
 
 endmodule
 

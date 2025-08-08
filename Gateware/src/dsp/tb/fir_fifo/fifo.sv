@@ -28,7 +28,7 @@ reg full;
 //FILE CONTENTS
 
 
-sync_fifo #(.WIDTH(43), .DEPTH(32)) uutF (
+sync_fifo #(.WIDTH(43), .DEPTH(64)) uutF (
 	.clk(CLK),
 	.rst(RST),
 	.wr_en(wr_en),

@@ -40,7 +40,7 @@ ClockDivider #(1) C1 (//HALFBAND 1 CLOCK DIVIDER
         );
  
 	//43 = 25 + 18 + 6 bit width
-  sync_fifo #(.WIDTH(49),.DEPTH(64)) F0 (
+  sync_fifo #(.WIDTH(49),.DEPTH(32)) F0 (
 	  .clk(MACCLK),
 	  .rst(RST),
 	  .wr_en(wr_en),
@@ -130,47 +130,9 @@ always @(posedge MACCLK or posedge RST) begin
 	end
 	else begin
 		casez(FilterState) 
-		3'b??1: begin 
-			wr_en <= 1;
-			case(HB1State)
-				3'h0: begin wr_en <= 1;
-			  {a_in,b_in,fifo_state_in} <= {HB1coff0,{1'b0,x_in},6'h0}; HB1State <= 3'h1; end
-			3'h1: begin {a_in,b_in,fifo_state_in} <= {HB1coff2,HB1D[1],6'h1}; HB1State <= 3'h2; end
-			3'h2: begin {a_in,b_in,fifo_state_in} <= {HB1coff4,HB1D[3],6'h2}; HB1State <= 3'h3; end
-			3'h3: begin {a_in,b_in,fifo_state_in} <= {HB1coff5,HB1D[4],6'h3}; HB1State <= 3'h4; end
-			3'h4: begin {a_in,b_in,fifo_state_in} <= {HB1coff4,HB1D[5],6'h4}; HB1State <= 3'h5; end
-			3'h5: begin {a_in,b_in,fifo_state_in} <= {HB1coff2,HB1D[7],6'h5}; HB1State <= 3'h6; end
-			3'h6: begin {a_in,b_in,fifo_state_in} <= {HB1coff0,HB1D[9],6'h6}; 
-			HB1State <= 3'h0;
-			FilterState[0] <= 0; end
-			endcase
-		end
-		3'b?10: begin wr_en <= 1; 
-			case(HB2State)
-			4'h0: begin wr_en <= 1;
-			      {a_in,b_in,fifo_state_in} <= {HB2coff0,HB1_OUT,6'h07}; HB2State <= 4'h1; end
-			4'h1: begin {a_in,b_in,fifo_state_in} <= {HB2coff2,HB2D[1],6'h08}; HB2State <= 4'h2; end
-			4'h2: begin {a_in,b_in,fifo_state_in} <= {HB2coff4,HB2D[3],6'h09}; HB2State <= 4'h3; end
-			4'h3: begin {a_in,b_in,fifo_state_in} <= {HB2coff6,HB2D[5],6'h0A}; HB2State <= 4'h4; end
-			4'h4: begin {a_in,b_in,fifo_state_in} <= {HB2coff8,HB2D[7],6'h0B}; HB2State <= 4'h5; end
-			4'h5: begin {a_in,b_in,fifo_state_in} <= {HB2coffA,HB2D[9],6'h0C}; HB2State <= 4'h6; end
-			4'h6: begin {a_in,b_in,fifo_state_in} <= {HB2coffC,HB2D[11],6'h0D}; HB2State <= 4'h7; end
-			4'h7: begin {a_in,b_in,fifo_state_in} <= {HB2coffD,HB2D[12],6'h0E}; HB2State <= 4'h8; end
-			4'h8: begin {a_in,b_in,fifo_state_in} <= {HB2coffC,HB2D[13],6'h0F}; HB2State <= 4'h9; end
-			4'h9: begin {a_in,b_in,fifo_state_in} <= {HB2coffA,HB2D[15],6'h10}; HB2State <= 4'hA; end
-			4'hA: begin {a_in,b_in,fifo_state_in} <= {HB2coff8,HB2D[17],6'h11}; HB2State <= 4'hB; end
-			4'hB: begin {a_in,b_in,fifo_state_in} <= {HB2coff6,HB2D[19],6'h12}; HB2State <= 4'hC; end
-			4'hC: begin {a_in,b_in,fifo_state_in} <= {HB2coff4,HB2D[21],6'h13}; HB2State <= 4'hD; end
-			4'hD: begin {a_in,b_in,fifo_state_in} <= {HB2coff2,HB2D[23],6'h14}; HB2State <= 4'hE; end
-			4'hE: begin {a_in,b_in,fifo_state_in} <= {HB2coff0,HB2D[25],6'h15}; 
-			HB2State <= 4'h0;
-			FilterState[1] <= 0; end
-			endcase
-		end
-		3'b1??: begin 
-			wr_en <= 1;
+		3'b1??: wr_en <= 1;
 			case(FIRState)
-			6'h0 : begin wr_en <= 1;
+			6'h0: begin wr_en <= 1;
 			      {a_in,b_in,fifo_state_in} <= {FIRcoff0,HB2_OUT,6'h16}; FIRState <= 6'h1; end
 			6'h1: begin {a_in,b_in,fifo_state_in} <= {FIRcoff1,FIRD[0],6'h17}; FIRState <= 6'h2; end
 			6'h2: begin {a_in,b_in,fifo_state_in} <= {FIRcoff2,FIRD[1],6'h18}; FIRState <= 6'h3; end
@@ -206,12 +168,53 @@ always @(posedge MACCLK or posedge RST) begin
 			6'h20:begin {a_in,b_in,fifo_state_in} <= {FIRcoff2,FIRD[1],6'h36}; FIRState <= 6'h21; end
 			6'h21:begin {a_in,b_in,fifo_state_in} <= {FIRcoff1,FIRD[1],6'h37}; FIRState <= 6'h22; end
 			6'h22:begin {a_in,b_in,fifo_state_in} <= {FIRcoff0,FIRD[1],6'h38}; 
+			wr_en <= 0;
 			FIRState <= 6'h0;
 			FilterState[2] <= 0; end
 			endcase
 		end
+		3'b01?: ;
+			case(HB2State)
+			4'h0: begin wr_en <= 1;
+			      {a_in,b_in,fifo_state_in} <= {HB2coff0,HB1_OUT,6'h07}; HB2State <= 4'h1; end
+			4'h1: begin {a_in,b_in,fifo_state_in} <= {HB2coff2,HB2D[1],6'h08}; HB2State <= 4'h2; end
+			4'h2: begin {a_in,b_in,fifo_state_in} <= {HB2coff4,HB2D[3],6'h09}; HB2State <= 4'h3; end
+			4'h3: begin {a_in,b_in,fifo_state_in} <= {HB2coff6,HB2D[5],6'h0A}; HB2State <= 4'h4; end
+			4'h4: begin {a_in,b_in,fifo_state_in} <= {HB2coff8,HB2D[7],6'h0B}; HB2State <= 4'h5; end
+			4'h5: begin {a_in,b_in,fifo_state_in} <= {HB2coffA,HB2D[9],6'h0C}; HB2State <= 4'h6; end
+			4'h6: begin {a_in,b_in,fifo_state_in} <= {HB2coffC,HB2D[11],6'h0D}; HB2State <= 4'h7; end
+			4'h7: begin {a_in,b_in,fifo_state_in} <= {HB2coffD,HB2D[12],6'h0E}; HB2State <= 4'h8; end
+			4'h8: begin {a_in,b_in,fifo_state_in} <= {HB2coffC,HB2D[13],6'h0F}; HB2State <= 4'h9; end
+			4'h9: begin {a_in,b_in,fifo_state_in} <= {HB2coffA,HB2D[15],6'h10}; HB2State <= 4'hA; end
+			4'hA: begin {a_in,b_in,fifo_state_in} <= {HB2coff8,HB2D[17],6'h11}; HB2State <= 4'hB; end
+			4'hB: begin {a_in,b_in,fifo_state_in} <= {HB2coff6,HB2D[19],6'h12}; HB2State <= 4'hC; end
+			4'hC: begin {a_in,b_in,fifo_state_in} <= {HB2coff4,HB2D[21],6'h13}; HB2State <= 4'hD; end
+			4'hD: begin {a_in,b_in,fifo_state_in} <= {HB2coff2,HB2D[23],6'h14}; HB2State <= 4'hE; end
+			4'hE: begin {a_in,b_in,fifo_state_in} <= {HB2coff0,HB2D[25],6'h15}; 
+			wr_en <= 0;
+			HB2State <= 4'h0;
+			FilterState[1] <= 0; end
+			endcase
+		end
+		3'b001: 
+			case(HB1State)
+				3'h0: begin wr_en <= 1;
+			  {a_in,b_in,fifo_state_in} <= {HB1coff0,{1'b0,x_in},6'h0}; HB1State <= 3'h1; end
+			3'h1: begin {a_in,b_in,fifo_state_in} <= {HB1coff2,HB1D[1],6'h1}; HB1State <= 3'h2; end
+			3'h2: begin {a_in,b_in,fifo_state_in} <= {HB1coff4,HB1D[3],6'h2}; HB1State <= 3'h3; end
+			3'h3: begin {a_in,b_in,fifo_state_in} <= {HB1coff5,HB1D[4],6'h3}; HB1State <= 3'h4; end
+			3'h4: begin {a_in,b_in,fifo_state_in} <= {HB1coff4,HB1D[5],6'h4}; HB1State <= 3'h5; end
+			3'h5: begin {a_in,b_in,fifo_state_in} <= {HB1coff2,HB1D[7],6'h5}; HB1State <= 3'h6; end
+			3'h6: begin {a_in,b_in,fifo_state_in} <= {HB1coff0,HB1D[9],6'h6}; 
+			wr_en <= 0;
+			HB1State <= 3'h0;
+			FilterState[0] <= 0; end
+			endcase
+		end
 		3'b000: begin wr_en <= 0; end
 		endcase
+
+
 	end
 end
 
@@ -351,21 +354,15 @@ end
 //Halfband 2 Output
 always @(posedge OUTCLK or posedge RST) begin 
         if(RST) HB2_OUT <= 0;
-        else    HB2_OUT <= (
-		HB2R[0] + HB2R[1] + HB2R[2] + HB2R[3] + HB2R[4] + HB2R[5] +
-		HB2R[6] + HB2R[7] + HB2R[8] + HB2R[9] + HB2R[10] + HB2R[11] +
-		HB2R[12] + HB2R[13] + HB2R[14])>>17;
+        else    HB2_OUT <= (HB2R[0] + HB2R[1] + HB2R[2] + HB2R[3] + HB2R[4] + HB2R[5]
+		+ HB2R[6] + HB2R[7] + HB2R[8] + HB2R[9] + HB2R[10] + HB2R[11]
+		+ HB2R[12] + HB2R[13] + HB2R[14])>>17;
 end
 
 //FIR Output
 always @(posedge OUTCLK or posedge RST) begin 
         if(RST) y_out <= 0;
-        else    y_out <= (
-		FIRR[0] + FIRR[1] + FIRR[2] + FIRR[3] + FIRR[4] + FIRR[5] + FIRR[6] + 
-		FIRR[7] + FIRR[8] + FIRR[9] + FIRR[10] + FIRR[11] + FIRR[12] + FIRR[13] + 
-		FIRR[14] + FIRR[15] + FIRR[16] + FIRR[17] + FIRR[18] + FIRR[19] + FIRR[20] + 
-		FIRR[21] + FIRR[22] + FIRR[23] + FIRR[24] + FIRR[25] + FIRR[26] + FIRR[27] + 
-		FIRR[28] + FIRR[29] + FIRR[30] + FIRR[31] + FIRR[33] + FIRR[34] + FIRR[34])>>18;
+        else    y_out <= FIRR[34]>>18;
 end
 
 endmodule

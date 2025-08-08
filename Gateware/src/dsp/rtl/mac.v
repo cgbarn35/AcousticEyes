@@ -7,20 +7,7 @@ module MACBlock_valid (
 	output signed [47:0] out,
 	output valid
 );
-
-always @(posedge clk) begin
-	if(rst) begin
-	out <= 0;
-	valid <= 0;
-	end else begin
-
-	end
-end
-
-
-
-
-
+//TODO ADD PIPELINE DELAYED MACBLOCK
 endmodule
 
 

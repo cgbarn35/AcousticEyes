@@ -2,9 +2,9 @@
 
 
 module top_pdm #(parameter N=96)(
-	input wire [N-1:0] PDM, //
 	input wire clk,
 	input wire rst,
+	input wire [N-1:0] PDM, //
 	output wire [15:0] PCM [N-1:0]
 );
 
@@ -64,9 +64,10 @@ generate
                 .clk(CLKDIVH2),
                 .rst(RST),
                 .x_in(HB2_OUT[i]),
-                .y_out(FIR_OUT[i])
+                .y_out(PCM[i])
         	);
         end
 endgenerate
 
 
+endmodule
